@@ -1,0 +1,405 @@
+import React, { useState } from 'react';
+import { Search, Building2, Briefcase, ExternalLink, Filter, Bookmark, BookmarkPlus, ChevronDown, ChevronRight } from 'lucide-react';
+
+const EmploymentDirectory = () => {
+  const [activeTab, setActiveTab] = useState('ministries');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSector, setSelectedSector] = useState('all');
+  const [bookmarked, setBookmarked] = useState([]);
+  const [expandedMinistry, setExpandedMinistry] = useState(null);
+
+  const ministries = [
+    {
+      name: "Office of the Prime Minister",
+      url: "https://opm.gov.jm",
+      careersUrl: "https://opm.gov.jm/participate/employment-opportunities/",
+      sector: "Central Government",
+      agencies: [
+        { name: "Jamaica Information Service (JIS)", url: "https://jis.gov.jm", careersUrl: "https://jis.gov.jm/corporate/careers/" },
+        { name: "Jamaica Defence Force (JDF)", url: "https://jdf.mil.jm", careersUrl: "https://jdf.mil.jm/recruitment" },
+        { name: "Integrity Commission", url: "https://integritycommission.gov.jm", careersUrl: "https://integritycommission.gov.jm/careers" }
+      ]
+    },
+    {
+      name: "Ministry of Finance and the Public Service",
+      url: "https://www.mof.gov.jm",
+      careersUrl: "https://www.mof.gov.jm/careers/",
+      sector: "Finance & Economics",
+      agencies: [
+        { name: "Bank of Jamaica (BOJ)", url: "https://www.boj.org.jm", careersUrl: "https://www.boj.org.jm/careers/" },
+        { name: "Tax Administration Jamaica (TAJ)", url: "https://www.taj.gov.jm", careersUrl: "https://www.jamaicatax.gov.jm/job-opportunities" },
+        { name: "Jamaica Customs Agency (JCA)", url: "https://www.jacustoms.gov.jm", careersUrl: "https://www.jacustoms.gov.jm/careers" },
+        { name: "Statistical Institute of Jamaica (STATIN)", url: "https://statinja.gov.jm", careersUrl: "https://statinja.gov.jm/careers" }
+      ]
+    },
+    {
+      name: "Ministry of Health and Wellness",
+      url: "https://www.moh.gov.jm",
+      careersUrl: "https://www.moh.gov.jm/careers/",
+      sector: "Health & Wellness"
+    },
+    {
+      name: "Ministry of Justice",
+      url: "https://www.moj.gov.jm",
+      careersUrl: "https://moj.gov.jm/careers",
+      sector: "Legal & Justice",
+      agencies: [
+        { name: "Attorney-General's Chambers", url: "https://www.ag.gov.jm", careersUrl: "https://www.ag.gov.jm/careers" },
+        { name: "Jamaica Legal Information Portal (JLIP)", url: "https://jlip.gov.jm", careersUrl: "https://jlip.gov.jm/careers" }
+      ]
+    },
+    {
+      name: "Ministry of National Security",
+      url: "https://www.mns.gov.jm",
+      careersUrl: "https://www.mns.gov.jm/careers",
+      sector: "Security & Defence",
+      agencies: [
+        { name: "Jamaica Constabulary Force (JCF)", url: "https://www.jcf.gov.jm", careersUrl: "https://www.jcf.gov.jm/recruitment" },
+        { name: "Passport, Immigration & Citizenship Agency (PICA)", url: "https://www.pica.gov.jm", careersUrl: "https://www.pica.gov.jm/careers" }
+      ]
+    },
+    {
+      name: "Ministry of Industry, Investment and Commerce",
+      url: "https://www.miic.gov.jm",
+      careersUrl: "https://www.miic.gov.jm/careers",
+      sector: "Commerce & Industry",
+      agencies: [
+        { name: "Companies Office of Jamaica (COJ)", url: "https://www.orc.org.jm", careersUrl: "https://www.orc.org.jm/careers" },
+        { name: "Bureau of Standards Jamaica (BSJ)", url: "https://www.bsj.org.jm", careersUrl: "https://www.bsj.org.jm/careers" },
+        { name: "JAMPRO (Jamaica Trade and Invest)", url: "https://www.jamaicatradeandinvest.org", careersUrl: "https://www.jamaicatradeandinvest.org/careers" }
+      ]
+    },
+    {
+      name: "Ministry of Education, Skills, Youth and Information",
+      url: "https://www.moey.gov.jm",
+      careersUrl: "https://www.moey.gov.jm/careers",
+      sector: "Education"
+    },
+    {
+      name: "Ministry of Foreign Affairs and Foreign Trade",
+      url: "https://www.mfaft.gov.jm",
+      careersUrl: "https://www.mfaft.gov.jm/careers",
+      sector: "Foreign Affairs"
+    },
+    {
+      name: "Ministry of Labour and Social Security",
+      url: "https://www.mlss.gov.jm",
+      careersUrl: "https://www.mlss.gov.jm/careers/",
+      sector: "Labour & Social Services"
+    },
+    {
+      name: "Ministry of Agriculture, Fisheries and Mining",
+      url: "https://www.moa.gov.jm",
+      careersUrl: "https://www.moa.gov.jm/careers",
+      sector: "Agriculture & Mining",
+      agencies: [
+        { name: "Agro-Investment Corporation (AIC)", url: "https://www.aic.gov.jm", careersUrl: "https://www.aic.gov.jm/careers" },
+        { name: "National Irrigation Commission Limited", url: "https://www.nic.gov.jm", careersUrl: "https://www.nic.gov.jm/careers" }
+      ]
+    },
+    {
+      name: "Ministry of Transport, Telecommunications and Energy",
+      url: "https://www.mtm.gov.jm",
+      careersUrl: "https://www.mtm.gov.jm/careers",
+      sector: "Transport & Energy",
+      agencies: [
+        { name: "Airports Authority of Jamaica (AAJ)", url: "https://www.aaj.com.jm", careersUrl: "https://www.aaj.com.jm/careers" },
+        { name: "Jamaica Post", url: "https://jamaicapost.gov.jm", careersUrl: "https://jamaicapost.gov.jm/careers" }
+      ]
+    }
+  ];
+
+  const publicCompanies = [
+    { name: "138 STUDENT LIVING JAMAICA LIMITED", sector: "Real Estate" },
+    { name: "A.S. BRYDEN & SONS HOLDINGS LIMITED", sector: "Distribution" },
+    { name: "BARITA INVESTMENTS LIMITED", url: "https://www.barita.com", careersUrl: "https://www.barita.com/careers", sector: "Financial Services" },
+    { name: "GRACEKENNEDY LIMITED", url: "https://gracekennedy.com", careersUrl: "https://gracekennedy.com/careers", sector: "Conglomerate" },
+    { name: "JAMAICA BROILERS GROUP", url: "https://www.jamaicabroilersgroup.com", careersUrl: "https://www.jamaicabroilersgroup.com/careers", sector: "Agriculture & Food" },
+    { name: "JAMAICA PUBLIC SERVICE CO. LTD.", url: "https://www.jpsco.com", careersUrl: "https://www.jpsco.com/careers", sector: "Utilities" },
+    { name: "JMMB GROUP LIMITED", url: "https://www.jmmb.com", careersUrl: "https://www.jmmb.com/careers", sector: "Financial Services" },
+    { name: "NCB FINANCIAL GROUP LIMITED", url: "https://www.jncb.com", careersUrl: "https://www.jncb.com/careers", sector: "Banking" },
+    { name: "SAGICOR GROUP JAMAICA LIMITED", url: "https://www.sagicor.com", careersUrl: "https://www.sagicor.com/careers", sector: "Financial Services" },
+    { name: "SCOTIA GROUP JAMAICA LIMITED", url: "https://jm.scotiabank.com", careersUrl: "https://jm.scotiabank.com/careers", sector: "Banking" },
+    { name: "SUPREME VENTURES LIMITED", url: "https://www.supremeventures.com", careersUrl: "https://www.supremeventures.com/careers", sector: "Gaming & Entertainment" },
+    { name: "WISYNCO GROUP LTD", url: "https://wisynco.com", careersUrl: "https://wisynco.com/careers", sector: "Manufacturing & Distribution" }
+  ];
+
+  const toggleBookmark = (name) => {
+    setBookmarked(prev => 
+      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    );
+  };
+
+  const sectors = ['all', ...new Set(activeTab === 'ministries' 
+    ? ministries.map(m => m.sector) 
+    : publicCompanies.map(c => c.sector).filter(Boolean)
+  )];
+
+  const filteredMinistries = ministries.filter(m => {
+    const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.agencies?.some(a => a.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSector = selectedSector === 'all' || m.sector === selectedSector;
+    return matchesSearch && matchesSector;
+  });
+
+  const filteredCompanies = publicCompanies.filter(c => {
+    const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSector = selectedSector === 'all' || c.sector === selectedSector;
+    return matchesSearch && matchesSector;
+  });
+
+  const totalAgencies = ministries.reduce((acc, m) => acc + (m.agencies?.length || 0), 0);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl shadow-xl p-8 mb-6 text-white">
+          <div className="flex items-center gap-3 mb-2">
+            <Building2 className="w-10 h-10" />
+            <h1 className="text-3xl font-bold">Jamaica Employment Directory</h1>
+          </div>
+          <p className="text-blue-100">Track all government ministries, agencies, and public companies career pages</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <div className="text-sm text-gray-600">Ministries</div>
+            <div className="text-2xl font-bold text-blue-600">{ministries.length}</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <div className="text-sm text-gray-600">Agencies</div>
+            <div className="text-2xl font-bold text-green-600">{totalAgencies}</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <div className="text-sm text-gray-600">Public Companies</div>
+            <div className="text-2xl font-bold text-purple-600">{publicCompanies.length}</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <div className="text-sm text-gray-600">Bookmarked</div>
+            <div className="text-2xl font-bold text-yellow-600">{bookmarked.length}</div>
+          </div>
+        </div>
+
+        <div className="flex gap-4 mb-6 flex-col sm:flex-row">
+          <button
+            onClick={() => { setActiveTab('ministries'); setSelectedSector('all'); }}
+            className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all ${
+              activeTab === 'ministries'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            <Building2 className="w-5 h-5 inline mr-2" />
+            Ministries ({ministries.length + totalAgencies})
+          </button>
+          <button
+            onClick={() => { setActiveTab('companies'); setSelectedSector('all'); }}
+            className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all ${
+              activeTab === 'companies'
+                ? 'bg-green-600 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            <Briefcase className="w-5 h-5 inline mr-2" />
+            Companies ({publicCompanies.length})
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="relative">
+              <Filter className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+              <select
+                value={selectedSector}
+                onChange={(e) => setSelectedSector(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+              >
+                {sectors.map(sector => (
+                  <option key={sector} value={sector}>
+                    {sector === 'all' ? 'All Sectors' : sector}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {activeTab === 'ministries' ? (
+          <div className="space-y-4">
+            {filteredMinistries.map((ministry, idx) => (
+              <div key={idx} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-gray-800">{ministry.name}</h3>
+                      <button
+                        onClick={() => toggleBookmark(ministry.name)}
+                        className="text-gray-400 hover:text-yellow-500 transition-colors"
+                      >
+                        {bookmarked.includes(ministry.name) ? (
+                          <Bookmark className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+                        ) : (
+                          <BookmarkPlus className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                      {ministry.sector}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-3 mb-4">
+                  <a
+                    href={ministry.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Website
+                  </a>
+                  <a
+                    href={ministry.careersUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                  >
+                    <Briefcase className="w-4 h-4" />
+                    Careers
+                  </a>
+                </div>
+
+                {ministry.agencies && ministry.agencies.length > 0 && (
+                  <div className="border-t border-gray-200 pt-4">
+                    <button
+                      onClick={() => setExpandedMinistry(expandedMinistry === idx ? null : idx)}
+                      className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm mb-3"
+                    >
+                      {expandedMinistry === idx ? (
+                        <ChevronDown className="w-4 h-4" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4" />
+                      )}
+                      {ministry.agencies.length} {ministry.agencies.length === 1 ? 'Agency' : 'Agencies'}
+                    </button>
+                    
+                    {expandedMinistry === idx && (
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {ministry.agencies.map((agency, agIdx) => (
+                          <div key={agIdx} className="p-4 bg-gray-50 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold text-gray-800 text-sm">{agency.name}</h4>
+                              <button
+                                onClick={() => toggleBookmark(agency.name)}
+                                className="text-gray-400 hover:text-yellow-500 transition-colors"
+                              >
+                                {bookmarked.includes(agency.name) ? (
+                                  <Bookmark className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                                ) : (
+                                  <BookmarkPlus className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                            <div className="flex gap-2">
+                              <a
+                                href={agency.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors text-xs"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                                Website
+                              </a>
+                              <a
+                                href={agency.careersUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors text-xs"
+                              >
+                                <Briefcase className="w-3 h-3" />
+                                Careers
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredCompanies.map((company, idx) => (
+              <div key={idx} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-5">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-bold text-gray-800 text-base leading-tight">{company.name}</h3>
+                      {company.url && (
+                        <button
+                          onClick={() => toggleBookmark(company.name)}
+                          className="text-gray-400 hover:text-yellow-500 transition-colors flex-shrink-0"
+                        >
+                          {bookmarked.includes(company.name) ? (
+                            <Bookmark className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                          ) : (
+                            <BookmarkPlus className="w-4 h-4" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                    {company.sector && (
+                      <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium mb-3">
+                        {company.sector}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                {company.url ? (
+                  <div className="flex gap-2">
+                    <a
+                      href={company.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      Website
+                    </a>
+                    <a
+                      href={company.careersUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                    >
+                      <Briefcase className="w-3 h-3" />
+                      Careers
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">Website coming soon</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default EmploymentDirectory;
